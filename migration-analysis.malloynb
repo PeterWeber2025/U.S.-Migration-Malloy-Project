@@ -1,0 +1,222 @@
+>>>markdown
+# Migration Analysis Notebook
+
+I started by wondering a simple question: **where are people actually moving within the United States?**  
+At first I expected the answer to be mostly obvious—big states losing to big states—but as I explored the data, the patterns turned out to be more directional, more uneven, and more regionally structured than I expected.
+
+That curiosity led me through three stages of investigation:
+1. Broad flows (who is leaving and where they go)
+2. Regional reshuffling (which parts of the country are gaining or losing people)
+3. Time and corridors (how those patterns evolve and concentrate)
+
+---
+
+## Model
+
+```malloy
+source: migration is duckdb.table("Merged_County_Outflows.csv") extend {
+
+  dimension: migration_year is 2000 + `year`
+  dimension: origin_state is `Origin State`
+  dimension: dest_state is `Destination State`
+  dimension: origin_county is `Origin County`
+  dimension: dest_county is `Destination County`
+
+  dimension: intrastate is origin_state = dest_state
+
+  measure: filings is sum(`Total Filings`)
+}
+>>>malloy
+## Model
+
+source: migration is duckdb.table("Merged_County_Outflows.csv") extend {
+
+  dimension: migration_year is 2000 + `year`
+  dimension: origin_state is `Origin State`
+  dimension: dest_state is `Destination State`
+  dimension: origin_county is `Origin County`
+  dimension: dest_county is `Destination County`
+
+  dimension: intrastate is origin_state = dest_state
+
+  measure: filings is sum(`Total Filings`)
+}
+>>>markdown
+## Broad migration flows
+
+I started my initial exploration by just looking at what states people are moving to and from, as a jumping off point of future analysis
+>>>markdown
+### Below is a query showing the places the most people left between 2011 and 2021
+>>>malloy
+# bar_chart
+run: migration -> {
+  group_by: state is origin_state
+  aggregate: outflow is filings
+  order_by: outflow desc
+}
+>>>markdown
+### This shows the inverse, the places the most people arrive at between 2011 and 2021
+>>>malloy
+# bar_chart
+run: migration -> {
+  group_by: state is dest_state
+  aggregate: inflow is filings
+  order_by: inflow desc
+}
+>>>markdown
+### This next query zooms in on the dataset to the county level, looking at the counties the most people are leaving and moving towards. Many of these counties are closeby to one another, making movement between the two easier.
+>>>malloy
+# bar_chart
+run: migration -> {
+  group_by: origin_county, dest_county
+  aggregate: filings
+  order_by: filings desc
+  limit: 5
+}
+>>>markdown
+## 🌎 Regional reshaping
+
+Once I had a sense of state and county level migration flows, I got curious whther whether migrations follows regional patterns or are really specific to each state.
+
+This is where a stronger pattern emerged: migration is not random—it clusters into regional exchanges.
+>>>markdown
+### Which led to the below query which showed that the most migration flows into a small set of growing Sun Belt states.
+>>>malloy
+# bar_chart
+run: migration -> {
+  where:
+    dest_state = ('Texas'|'Florida'|'Arizona')
+    and origin_state = ('New York'|'Illinois'|'Ohio'|'Pennsylvania'|'Michigan'|'New Jersey'|'Massachusetts'|'California')
+
+  group_by: origin_state, dest_state
+  aggregate: filings
+  order_by: filings desc
+}
+>>>markdown
+### California behaves differently from other large states, with outflow distributed across many destinations.
+>>>malloy
+# bar_chart
+run: migration -> {
+  where:
+    origin_state = 'California'
+    and dest_state != 'California'
+
+  group_by: dest_state
+  aggregate: filings
+  order_by: filings desc
+}
+>>>markdown
+### I saw Washington was in the above query which led to curiosity about where we source most of our migration.
+>>>malloy
+# bar_chart
+run: migration -> {
+  where:
+    dest_state = 'Washington'
+    and origin_state != 'Washington'
+
+  group_by: origin_state
+  aggregate: filings
+  order_by: filings desc
+}
+>>>markdown
+## ⏳ Time dynamics
+
+After identifying structural geography, the next question for me was whether these patterns are stable or shifting over time.
+>>>malloy
+# line_chart
+run: migration -> {
+  where: origin_state != dest_state
+  group_by: migration_year
+  aggregate: filings
+  order_by: migration_year
+}
+>>>markdown
+### Certain large counties consistently act as migration sources, making it useful to track them over time.
+>>>malloy
+# line_chart
+run: migration -> {
+  where:
+    origin_county = ('Los Angeles County'|'New York County'|'Cook County')
+
+  group_by: migration_year, origin_county
+  aggregate: filings
+  order_by: migration_year
+}
+>>>markdown
+This highlights where migration patterns change most dramatically from year to year.
+>>>malloy
+run: migration -> {
+  group_by: origin_county, migration_year
+  aggregate: filings
+  order_by: origin_county, migration_year
+
+  calculate:
+    prev is lag(filings)
+    change is filings - prev
+    abs_change is case
+      when change < 0 then -change
+      else change
+    end
+}
+-> {
+  select:
+    origin_county
+    migration_year
+    filings
+    prev
+    change
+    abs_change
+
+  order_by: abs_change desc
+  limit: 50
+}
+>>>markdown
+## 🔁 Migration corridors
+
+At this point, the analysis shifts from general patterns to specific high-volume migration routes.
+
+These corridors help reveal the underlying structure behind the broader flows.
+>>>malloy
+# line_chart
+run: migration -> {
+  where:
+    origin_state = 'New York'
+    and dest_state = 'Florida'
+
+  group_by: migration_year
+  aggregate: filings
+  order_by: migration_year
+}
+>>>malloy
+# line_chart
+run: migration -> {
+  where:
+    origin_state = 'California'
+    and dest_state = 'Texas'
+
+  group_by: migration_year
+  aggregate: filings
+  order_by: migration_year
+}
+>>>malloy
+# bar_chart
+run: migration -> {
+  where:
+    origin_state = ('Illinois'|'Ohio'|'Michigan'|'Wisconsin'|'Minnesota'|'Indiana')
+
+  group_by: origin_county, dest_state
+  aggregate: filings
+  order_by: filings desc
+  limit: 8
+}
+>>>markdown
+## Conclusion
+
+What began as a simple curiosity about migration turned into a structured story:
+
+Movement across the U.S. is not random, but shaped by:
+- regional gravity
+- concentrated corridors
+- persistent directional flows between specific states
+
+The surprising result was not just where people move—but how structured and repeatable those movements are.
