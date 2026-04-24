@@ -1,0 +1,176 @@
+source: migration is duckdb.table("Merged_County_Outflows.csv") extend {
+
+  # ── Dimensions ──────────────────────────────────────────────────────────────
+  dimension: migration_year is 2000 + `year`
+  dimension: origin_state is `Origin State`
+  dimension: dest_state is `Destination State`
+  dimension: origin_county is `Origin County`
+  dimension: dest_county is `Destination County`
+
+  dimension: intrastate is origin_state = dest_state
+
+  # ── Measures ────────────────────────────────────────────────────────────────
+  measure: filings is sum(`Total Filings`)
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 🧭 BROAD MIGRATION PATTERNS
+# ──────────────────────────────────────────────────────────────────────────────
+
+# 1. Outflow by state
+# bar_chart
+run: migration -> {
+  group_by: state is origin_state
+  aggregate: outflow is filings
+  order_by: outflow desc
+}
+
+# 2. Inflow by state
+# bar_chart
+run: migration -> {
+  group_by: state is dest_state
+  aggregate: inflow is filings
+  order_by: inflow desc
+}
+
+# 3. Strongest county-to-county corridors
+# bar_chart
+run: migration -> {
+  group_by: origin_county, dest_county
+  aggregate: filings
+  order_by: filings desc
+  limit: 5
+}
+
+# 4. Intrastate vs interstate share
+run: migration -> {
+  group_by: intrastate
+  aggregate: filings
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 🌎 GEOGRAPHIC TRENDS
+# ──────────────────────────────────────────────────────────────────────────────
+
+# 5. Sun Belt inflows from Rust Belt / Northeast
+# bar_chart
+run: migration -> {
+  where:
+    dest_state in ('Texas','Florida','Arizona')
+    and origin_state in ('New York','Illinois','Ohio','Pennsylvania','Michigan','New Jersey','Massachusetts')
+
+  group_by: origin_state, dest_state
+  aggregate: filings
+  order_by: filings desc
+}
+
+# 6. Where California loses people
+# bar_chart
+run: migration -> {
+  where: origin_state = 'California' AND dest_state != 'California'
+  group_by: dest_state
+  aggregate: filings
+  order_by: filings desc
+}
+
+# 7. Who feeds Washington
+# bar_chart
+run: migration -> {
+  where: dest_state = 'Washington' AND origin_state != 'Washington'
+  group_by: origin_state
+  aggregate: filings
+  order_by: filings desc
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# ⏳ TIME-BASED ANALYSIS
+# ──────────────────────────────────────────────────────────────────────────────
+
+# 8. Total interstate migration over time
+# line_chart
+run: migration -> {
+  where: origin_state != dest_state
+  group_by: migration_year
+  aggregate: filings
+  order_by: migration_year
+}
+
+# 9. Urban exodus (major counties)
+# line_chart
+run: migration -> {
+  where:
+    origin_county in ('Los Angeles County','New York County','Cook County')
+
+  group_by: migration_year, origin_county
+  aggregate: filings
+  order_by: migration_year
+}
+# 11. Year-over-year volatility (largest swings)
+run: migration -> {
+
+  group_by: origin_county, migration_year
+  aggregate: filings
+  order_by: origin_county, migration_year
+
+  calculate:
+    prev is lag(filings)
+    change is filings - prev
+    abs_change is case
+      when change < 0 then -change
+      else change
+    end
+
+} -> {
+
+  select:
+    origin_county
+    migration_year
+    filings
+    prev
+    change
+    abs_change
+
+  order_by: abs_change desc
+  limit: 50
+
+}
+
+# ──────────────────────────────────────────────────────────────────────────────
+# 🔁 SPECIFIC CORRIDORS
+# ──────────────────────────────────────────────────────────────────────────────
+
+# 13. New York → Florida trend
+# line_chart
+run: migration -> {
+  where:
+    origin_state = 'New York'
+    and dest_state = 'Florida'
+
+  group_by: migration_year
+  aggregate: filings
+  order_by: migration_year
+}
+
+# 14. California → Texas trend
+# line_chart
+run: migration -> {
+  where:
+    origin_state = 'California'
+    and dest_state = 'Texas'
+
+  group_by: migration_year
+  aggregate: filings
+  order_by: migration_year
+}
+
+# 15. Midwest outflows
+# bar_chart
+run: migration -> {
+  where:
+    origin_state in ('Illinois','Ohio','Michigan','Wisconsin','Minnesota','Indiana')
+
+  group_by: origin_county, dest_state
+  aggregate: filings
+  order_by: filings desc
+  limit: 8
+}
