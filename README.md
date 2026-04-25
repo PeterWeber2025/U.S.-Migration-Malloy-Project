@@ -14,13 +14,13 @@ I started this project with a couple key points I wanted to determine:
 -How has state to state migration fluctuated over the decade I am analyzing.
 
 ### Key Findings
-#### 1. 
+## 1. 
 Migration trends vary significantly from state to state and shouldn't be generalized to entire regions. Just because one state in a region sends large numbers of migrants to another region doesn't mean its neighboring states do the same. Each state has its own distinct migration profile, and broad regional patterns can obscure these differences.
-#### 2.
+## 2.
 Migration between states isn't a stable phenomena, it varies heavily from year to year, for this time period (2011 - 2021), 2015 was the year with least migration at slightly less than 2 million migrants, and 2017 was the largest year with over 4 million migrants.
-#### 3.
+## 3.
 When people migrate they are much more likely to move to a new state and county, than to stay in the same state but switch counties.
-#### 4.
+## 4.
 States that send the most migrants out also tend to attract the most migrants in. This means the impact of people leaving or arriving is often overstated — focusing only on outflows ignores the offsetting effect of inflows, and vice versa. A state that appears to be "hemorrhaging" residents may simultaneously be drawing in large numbers of new ones, making the net effect far more modest than headline migration numbers suggest.
 
 ### So What?
