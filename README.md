@@ -16,6 +16,7 @@ I started this project with a couple key points I wanted to determine:
 ### Key Findings
 ### 1.
 Migration trends vary significantly from state to state and shouldn't be generalized to entire regions. Just because one state in a region sends large numbers of migrants to another region doesn't mean its neighboring states do the same. Each state has its own distinct migration profile, and broad regional patterns can obscure these differences.
+(Inflow Bar Chart)[images/inflow.png]
 ### 2. 
 Migration between states isn't a stable phenomena, it varies heavily from year to year, for this time period (2011 - 2021), 2015 was the year with least migration at slightly less than 2 million migrants, and 2017 was the largest year with over 4 million migrants.
 ### 3.
