@@ -11,12 +11,11 @@ I started this project with a couple key points I wanted to determine:
 - What states have the most inflows and outflows from migration.
 - Are migration trends regional, or state specific.
 - California has a reptuation for having large outflows, is this reputation warranted, and what states do people from California move to the most.
--How has state to state migration fluctuated over the decade I am analyzing.
+- How has state to state migration fluctuated over the decade I am analyzing.
 
 ### Key Findings
 ### 1.
 Migration trends vary significantly from state to state and shouldn't be generalized to entire regions. Just because one state in a region sends large numbers of migrants to another region doesn't mean its neighboring states do the same. Each state has its own distinct migration profile, and broad regional patterns can obscure these differences.
-
 
 
 ### 2. 
@@ -36,6 +35,6 @@ States that send the most migrants out also tend to attract the most migrants in
 ![Outflow Bar Chart](images/outflow.png)
 
 ### So What?
-Migration data is relevant to a wide range of people — urban planners, real estate developers, governments, and businesses For all of them, having an accurate picture of where people are moving, and in what numbers, is foundational to making good decisions. 
+These findings help clarify how migration actually works in the U.S., rather than how it’s often assumed to work. Trends vary by state, not region, and change significantly year to year, meaning simple narratives or static assumptions can be misleading.
 
-This analysis offers a correction to the oversimplified migration narratives that dominate public discourse. A state is rarely just "gaining" or "losing" peoplem net migration is what actually matters. In most high profile cases inflows and outflows largely offset each other, and migration fluctuates significantly year to year, making single-year snapshots a poor basis for sweeping conclusions.
+This matters because it leads to better decisions. Businesses and policymakers can more accurately plan around population shifts, housing demand, and workforce changes. It also challenges common narratives—states seen as “losing people” may actually have high turnover, not decline, helping avoid overreactions and focus on the real net impact of migration.
