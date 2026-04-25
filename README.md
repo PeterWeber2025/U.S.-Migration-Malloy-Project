@@ -17,15 +17,19 @@ I started this project with a couple key points I wanted to determine:
 ### 1.
 Migration trends vary significantly from state to state and shouldn't be generalized to entire regions. Just because one state in a region sends large numbers of migrants to another region doesn't mean its neighboring states do the same. Each state has its own distinct migration profile, and broad regional patterns can obscure these differences.
 
-![Inflow Bar Chart](images/inflow.png)
+
 
 ### 2. 
 Migration between states isn't a stable phenomena, it varies heavily from year to year, for this time period (2011 - 2021), 2015 was the year with least migration at slightly less than 2 million migrants, and 2017 was the largest year with over 4 million migrants.
+![Year Trend Line Chart]("images/year_over_year.png")
+
 ### 3.
 When people decide to move, they are far more likely to cross state lines entirely than to simply relocate within their current state. In other words, the decision to migrate is less about minor lifestyle adjustments or local dissatisfaction and more about pursuing fundamentally different opportunities, costs of living, or environments that their current state simply can't offer.
+![Intrastate Table](images/intrastate.png)
 ### 4.
 States that send the most migrants out also tend to attract the most migrants in. This means the impact of people leaving or arriving is often overstated — focusing only on outflows ignores the offsetting effect of inflows, and vice versa. A state that appears to be "hemorrhaging" residents may simultaneously be drawing in large numbers of new ones, making the net effect far more modest than headline migration numbers suggest.
-
+![Inflow Bar Chart](images/inflow.png)
+![Outflow Bar Chart](images/outflow.png)
 ### So What?
 Migration data is relevant to a wide range of people — urban planners, real estate developers, governments, and businesses For all of them, having an accurate picture of where people are moving, and in what numbers, is foundational to making good decisions. 
 
