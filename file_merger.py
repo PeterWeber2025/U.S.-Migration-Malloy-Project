@@ -51,7 +51,7 @@ def resolve_county(state_fips, county_fips, fallback_name=None):
         return None
 
 # ── Process files ────────────────────────────────────────────────────────────
-csv_files = [f for f in glob.glob('*.csv') if f != 'Merged_County_Outflows.csv']
+csv_files = [f for f in glob.glob('data/*.csv') if f != 'Merged_County_Outflows.csv']
 
 if not csv_files:
     print("No CSV files found.")
